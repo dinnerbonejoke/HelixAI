@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Download HelixAI</title>
+<meta name="description" content="Download the HelixAI desktop app for Windows, macOS and Linux.">
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff; --text: #18181b; --muted: #8a8a91; --border: #e8e8e6; --panel: #f4f4f3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0c0c0d; --text: #ececee; --muted: #85858c; --border: #242427; --panel: #161618; }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: grid; place-items: center; padding: 24px;
+  }
+  main { width: min(400px, 100%); text-align: center; }
+  .logo { width: 40px; height: 40px; margin: 0 auto 18px; color: var(--text); }
+  .logo svg { width: 100%; height: 100%; }
+  h1 { margin: 0 0 8px; font-size: 1.7rem; font-weight: 600; letter-spacing: -.02em; }
+  .sub { margin: 0 0 32px; color: var(--muted); font-size: .95rem; }
+  .btn {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px 18px; margin: 10px 0; border-radius: 12px; text-decoration: none;
+    border: 1px solid var(--border); color: var(--text); font-size: .95rem; font-weight: 500;
+    transition: background .15s, opacity .15s;
+  }
+  .btn small { font-weight: 400; font-size: .78rem; color: var(--muted); }
+  .btn:hover { background: var(--panel); }
+  .btn.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .btn.primary small { color: var(--bg); opacity: .65; }
+  .btn.primary:hover { opacity: .88; background: var(--text); }
+  .btn.disabled { opacity: .5; pointer-events: none; }
+  .note { margin: 26px 0 0; color: var(--muted); font-size: .8rem; line-height: 1.6; text-align: left;
+          padding: 14px 16px; background: var(--panel); border-radius: 12px; display: none; }
+  .note.show { display: block; }
+  .note b { color: var(--text); font-weight: 550; }
+  .foot { margin-top: 26px; color: var(--muted); font-size: .8rem; }
+  .foot a { color: var(--text); text-decoration: none; font-weight: 500; }
+  .foot a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<main>
+  <div class="logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M7 3c0 6 10 6 10 12s-10 6-10 6"/><path d="M17 3c0 6-10 6-10 12s10 6 10 6"/><path d="M8.5 7.5h7M8.5 16.5h7"/>
+    </svg>
+  </div>
+  <h1>Download HelixAI</h1>
+  <p class="sub">The desktop app for your computer.</p>
+
+  <div id="buttons"></div>
+
+  <div class="note" id="note-win">
+    <b>Windows may show a warning.</b> If you see "Windows protected your PC", click <b>More info</b>, then <b>Run anyway</b>.
+  </div>
+  <div class="note" id="note-mac">
+    <b>macOS may block the first launch.</b> Open <b>System Settings &rarr; Privacy &amp; Security</b> and click <b>Open Anyway</b>.
+  </div>
+
+  <p class="foot">Prefer the browser? <a href="https://helixai.site">Open helixai.site</a></p>
+</main>
+
+<script>
+/* ---------------- EDIT THIS SECTION ----------------
+   Downloads are served from your GitHub Releases "latest" release.
+   Set GITHUB_USER / REPO, and flip `available` to true as you build each installer.
+   File names must match what is in your release exactly. */
+const GITHUB_USER = 'dinnerbonejoke';
+const REPO = 'HelixAI';
+
+const DOWNLOADS = {
+  win:   { label: 'Download for Windows', detail: '.exe',      file: 'HelixAI-win-x64.exe',            available: true  },
+  mac:   { label: 'Download for macOS',   detail: '.dmg',      file: 'HelixAI-mac-arm64.dmg',          available: false },
+  linux: { label: 'Download for Linux',   detail: 'AppImage',  file: 'HelixAI-linux-x86_64.AppImage',  available: false },
+};
+/* -------------------------------------------------- */
+
+const BASE = `https://github.com/${GITHUB_USER}/${REPO}/releases/latest/download/`;
+const ua = navigator.userAgent;
+const mine = /Windows/i.test(ua) ? 'win' : /Mac/i.test(ua) ? 'mac' : /Linux|X11/i.test(ua) && !/Android/i.test(ua) ? 'linux' : 'win';
+
+const order = [mine, ...Object.keys(DOWNLOADS).filter(k => k !== mine)];
+const box = document.getElementById('buttons');
+order.forEach((key, i) => {
+  const d = DOWNLOADS[key];
+  const a = document.createElement('a');
+  a.className = 'btn' + (i === 0 ? ' primary' : '') + (d.available ? '' : ' disabled');
+  if (d.available) { a.href = BASE + d.file; a.setAttribute('download', ''); }
+  a.innerHTML = '<span>' + d.label + '</span><small>' + (d.available ? d.detail : 'Coming soon') + '</small>';
+  box.appendChild(a);
+});
+
+if (DOWNLOADS[mine].available || mine === 'win') {
+  const n = document.getElementById('note-' + mine);
+  if (n) n.classList.add('show');
+}
+</script>
+</body>
+</html>
